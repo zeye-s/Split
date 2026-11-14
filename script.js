@@ -18,7 +18,8 @@ let player1 = {
     y: canvas1.clientHeight - floor - size1,
     vy: 0,
     isGrounded: false,
-    size: size1
+    size: size1,
+    finish: false,
 }
 
 let player2 = {
@@ -27,6 +28,7 @@ let player2 = {
     vy: 0,
     isGrounded: false,
     size:size2,
+    finish: false,
 }
 
 window.addEventListener("keydown", (e) => {
@@ -53,11 +55,18 @@ let platforms = [
     { x: 670, y: 430, width: 80, height: 15 }
 ];
 
+let goals = [
+    {x: 100, y: 20, width:50, height:15},
+]
 
 function drawPlatforms(ctx) {
     ctx.fillStyle = "white"; 
     for (let p of platforms) {
         ctx.fillRect(p.x, p.y, p.width, p.height);
+    }
+    ctx.fillStyle = "lightgreen";
+    for (let g of goals) {
+        ctx.fillRect(g.x, g.y, g.width, g.height);
     }
 }
 
@@ -67,12 +76,13 @@ function setup(){
 
     ctx1.fillStyle = "red";
     ctx1.fillRect(player1.x, player1.y, size1, size1);
-    ctx2.fillStyle = "blue";
+    ctx2.fillStyle = "lightblue";
     ctx2.fillRect(player2.x, player2.y, size1, size1);
 
     drawPlatforms(ctx1);
     drawPlatforms(ctx2);
-
+    ctx1.fillStyle = "white";
+    ctx2.fillStyle = "white";
     ctx1.fillRect(0, canvas1.clientHeight - floor, canvas1.clientWidth, floor);
     ctx2.fillRect(0, canvas2.clientHeight - floor, canvas2.clientWidth, floor);
 
@@ -98,7 +108,6 @@ function updatePlayer(player, canvas) {
 
     let groundLevel = canvas.height - floor - player.size;
 
-    // 1. Check Floor Collision
     if (player.y >= groundLevel) {
         player.y = groundLevel;
         player.vy = 0;
@@ -106,54 +115,65 @@ function updatePlayer(player, canvas) {
         return;
     }
 
+    let playerBottomPrev = (player.y - player.vy) + player.size;
+    let playerBottomCurr = player.y + player.size;
 
     for (let p of platforms) {
         let horizontalOverlap = (player.x + player.size > p.x) && (player.x < p.x + p.width);
 
-        if (horizontalOverlap) {
-            let playerBottomPrev = (player.y - player.vy) + player.size;
-            let playerBottomCurr = player.y + player.size;
+        if (horizontalOverlap && player.vy >= 0 && playerBottomPrev <= p.y && playerBottomCurr >= p.y) {
+            player.y = p.y - player.size;
+            player.vy = 0;
+            player.isGrounded = true;
+            break;
+        }
+    }
+    for (let g of goals) {
+        let horizontalOverlap = (player.x + player.size > g.x) && (player.x < g.x + g.width);
 
-            if (player.vy >= 0 && playerBottomPrev <= p.y && playerBottomCurr >= p.y) {
-                player.y = p.y - player.size;
-                player.vy = 0;
-                player.isGrounded = true;
-                break;
-            }
+        if (horizontalOverlap && player.vy >= 0 && playerBottomPrev <= g.y && playerBottomCurr >= g.y) {
+            player.y = g.y - player.size;
+            player.vy = 0;
+            player.isGrounded = true;
+            player.finish = true;
+            break;
         }
     }
 }
 
 function handleInput() {
-    if (keys["a"]) {
-        player1.x -= moveSpeed;
-        if (player1.x < 0) player1.x = 0;
-    }
-    if (keys["d"]) {
-        player1.x += moveSpeed;
-        if (player1.x > canvas1.clientWidth - player1.size) {
-            player1.x = canvas1.clientWidth - player1.size;
+    if (!player1.finish) {
+        if (keys["a"]) {
+            player1.x -= moveSpeed;
+            if (player1.x < 0) player1.x = 0;
+        }
+        if (keys["d"]) {
+            player1.x += moveSpeed;
+            if (player1.x > canvas1.clientWidth - player1.size) {
+                player1.x = canvas1.clientWidth - player1.size;
+            }
+        }
+        if (keys["w"] && player1.isGrounded) {
+            player1.vy = jumpPower;
+            player1.isGrounded = false;
         }
     }
-    if (keys["w"] && player1.isGrounded) {
-        player1.vy = jumpPower;
-        player1.isGrounded = false;
-    }
 
-
-    if (keys["ArrowLeft"]) {
-        player2.x -= moveSpeed;
-        if (player2.x < 0) player2.x = 0;
-    }
-    if (keys["ArrowRight"]) {
-        player2.x += moveSpeed;
-        if (player2.x > canvas2.clientWidth - player2.size) {
-            player2.x = canvas2.clientWidth - player2.size;
+    if (!player2.finish) {
+        if (keys["ArrowLeft"]) {
+            player2.x -= moveSpeed;
+            if (player2.x < 0) player2.x = 0;
         }
-    }
-    if (keys["ArrowUp"] && player2.isGrounded) {
-        player2.vy = jumpPower;
-        player2.isGrounded = false;
+        if (keys["ArrowRight"]) {
+            player2.x += moveSpeed;
+            if (player2.x > canvas2.clientWidth - player2.size) {
+                player2.x = canvas2.clientWidth - player2.size;
+            }
+        }
+        if (keys["ArrowUp"] && player2.isGrounded) {
+            player2.vy = jumpPower;
+            player2.isGrounded = false;
+        }
     }
 }
 
