@@ -3,6 +3,7 @@ const canvas2 = document.getElementById("player2Board");
 const ctx1 = canvas1.getContext('2d');
 const ctx2 = canvas2.getContext('2d');
 const floor = 20;
+const platformHeight = 20;
 
 let intervalID;
 let size1 = 20;
@@ -19,6 +20,9 @@ let player2 = {
     y: canvas2.clientHeight - floor - size2,
     jumpHeight: 250,
 }
+
+window.addEventListener("keydown", move);
+
 
 function setup(){
     ctx1.fillStyle = "white";
@@ -37,8 +41,55 @@ function setup(){
     
 }
 
+function clearBoard(){
+    ctx1.fillStyle = "black";
+    ctx2.fillStyle = "black";
+
+    ctx1.fillRect(0,0,canvas1.clientWidth, canvas1.clientHeight);
+    ctx2.fillRect(0,0,canvas2.clientWidth, canvas2.clientHeight);
+}
+
+function move(e){
+    let key = e.key;
+    if(e.defaultPrevented){
+        return;
+    }
+
+
+    switch(key){
+        case "a":
+            player1.x -= size1;
+            if(player1.x <= 0){
+                player1.x = 0;
+            }
+            break;
+        case "d":
+            player1.x += size1;
+            if(player1.x >= canvas1.clientWidth - size1){
+                player1.x = canvas1.clientWidth - size1;
+            }
+            break;
+        case "ArrowLeft":
+            player2.x -= size2;
+            if(player2.x <= 0){
+                player2.x = 0;
+            }
+            break;
+        case "ArrowRight":
+            player2.x += size2;
+            if(player2.x >= canvas2.clientWidth - size2){
+                player2.x = canvas2.clientWidth - size2;
+            }
+            break;
+        default:
+            return;
+    }
+    e.preventDefault();
+}
+
 setup();
 
 intervalID = setInterval(()=>{
+    clearBoard();
     setup();
 }, 10)
