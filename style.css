@@ -2,6 +2,7 @@ canvas{
     background-color:black;
     width:90%;
     margin-left:5%;
+    height: 70%;
 }
 
 .screen{
@@ -17,15 +18,25 @@ body{
     overflow:hidden;
 }
 
-.down{
+.down, .up{
     display:flex;
     flex-direction: row;
     justify-content:center;
+    border:1px solid black;
+    height:80px;
 }
 
-.down h1{
+.down h1, .up h1{
     border:2px solid black;
-    width:60px;
-    height:50px;
-    padding:5px;
+    width:100px;
+    height:80px;
+    text-align:center;
+    margin:auto;
+}
+
+#player1Controls, #player2Controls{
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    margin-top:5%;
 }
