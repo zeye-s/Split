@@ -44,7 +44,7 @@ window.addEventListener("keyup", (e) => {
 let platforms = [
     { x: 50, y: 180, width: 100, height: 15 },
     { x: 200, y: 120, width: 120, height: 15 },
-    { x: 100, y: 70, width: 90, height: 15 }
+    { x: 100, y: canvas1.height - 70, width: 90, height: 15 }
 ];
 
 
@@ -89,14 +89,33 @@ function clearBoard(){
 function updatePlayer(player, canvas) {
     player.vy += gravity;
     player.y += player.vy;
+    player.isGrounded = false;
 
     let groundLevel = canvas.height - floor - player.size;
+
+    // 1. Check Floor Collision
     if (player.y >= groundLevel) {
         player.y = groundLevel;
         player.vy = 0;
         player.isGrounded = true;
-    } else {
-        player.isGrounded = false;
+        return;
+    }
+
+
+    for (let p of platforms) {
+        let horizontalOverlap = (player.x + player.size > p.x) && (player.x < p.x + p.width);
+
+        if (horizontalOverlap) {
+            let playerBottomPrev = (player.y - player.vy) + player.size;
+            let playerBottomCurr = player.y + player.size;
+
+            if (player.vy >= 0 && playerBottomPrev <= p.y && playerBottomCurr >= p.y) {
+                player.y = p.y - player.size;
+                player.vy = 0;
+                player.isGrounded = true;
+                break;
+            }
+        }
     }
 }
 
@@ -140,4 +159,3 @@ intervalID = setInterval(()=>{
     setup();
     handleInput();
 }, 10)
-
