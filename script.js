@@ -42,9 +42,15 @@ window.addEventListener("keyup", (e) => {
 });
 
 let platforms = [
-    { x: 50, y: 180, width: 100, height: 15 },
-    { x: 200, y: 120, width: 120, height: 15 },
-    { x: 100, y: canvas1.height - 70, width: 90, height: 15 }
+    { x: 140, y: 70, width: 80, height: 15 },
+    { x: 290, y: 160, width: 90, height: 15 },
+    
+    { x: 380, y: 250, width: 100, height: 15 },
+    { x: 480, y: 290, width: 70, height: 15 },
+    { x: 410, y: 390, width: 90, height: 15 },
+    
+    { x: 520, y: 500, width: 110, height: 15 },
+    { x: 670, y: 430, width: 80, height: 15 }
 ];
 
 
@@ -59,10 +65,9 @@ function setup(){
     updatePlayer(player1, canvas1);
     updatePlayer(player2, canvas2);
 
-    ctx1.fillStyle = "white";
-    ctx2.fillStyle = "white";
-
+    ctx1.fillStyle = "red";
     ctx1.fillRect(player1.x, player1.y, size1, size1);
+    ctx2.fillStyle = "blue";
     ctx2.fillRect(player2.x, player2.y, size1, size1);
 
     drawPlatforms(ctx1);
