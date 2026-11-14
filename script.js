@@ -183,4 +183,23 @@ intervalID = setInterval(()=>{
     clearBoard();
     setup();
     handleInput();
+    checkFinish();
 }, 10)
+
+const player1Finish = document.getElementById("player1Finish");
+const player2Finish = document.getElementById("player2Finish");
+const completeScreen = document.getElementById("completeScreen");
+
+function checkFinish(){
+    if(player1.finish){
+        player1Finish.classList.add("finish");
+    }
+    if(player2.finish){
+        player2Finish.classList.add("finish");
+    }
+    if(player1.finish && player2.finish){
+        player1Finish.classList.remove("finish");
+        player2Finish.classList.remove("finish");
+        completeScreen.classList.add("finish");
+    }
+}

@@ -40,3 +40,53 @@ body{
     align-items: center;
     margin-top:5%;
 }
+
+#player1Finish{
+    position:fixed;
+    top:5%;
+    left:5;
+    color:white;
+    background:black;
+    display:flex;
+    border:1px solid white;
+    padding:20px;
+    z-index:-1;
+}
+
+#player1Finish.finish{
+    z-index:999;
+}
+
+#player2Finish{
+    position:fixed;
+    top:5%;
+    right:5;
+    color:white;
+    background:black;
+    display:flex;
+    border:1px solid white;
+    padding:20px;
+    z-index:-1;
+}
+
+#player2Finish.finish{
+    z-index:999;
+}
+
+#completeScreen{
+    z-index:-1;
+    position:fixed;
+    background:black;
+    color:white;
+    border:2px solid white;
+    top:10%;
+    left:30%;
+    right:30%;
+    opacity: 0;
+    text-align: center;
+}
+
+#completeScreen.finish{
+    z-index:999;
+    opacity:1;
+}
