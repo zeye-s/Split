@@ -3,18 +3,22 @@ const canvas2 = document.getElementById("player2Board");
 const ctx1 = canvas1.getContext('2d');
 const ctx2 = canvas2.getContext('2d');
 const floor = 20;
-const gravity = 0.5;
+const gravity = 0.2;
 
 let intervalID;
 let size1 = 20;
 let size2 = 20;
-let jumpPower = -7.5;
+let jumpPower = -6.5;
+let moveSpeed = 3;
+
+const keys = {};
 
 let player1 = {
     x: 25,
     y: canvas1.clientHeight - floor - size1,
     vy: 0,
     isGrounded: false,
+    size: size1
 }
 
 let player2 = {
@@ -22,10 +26,20 @@ let player2 = {
     y: canvas2.clientHeight - floor - size2,
     vy: 0,
     isGrounded: false,
+    size:size2,
 }
 
-window.addEventListener("keydown", move);
-window.addEventListener("keydown", jump);
+window.addEventListener("keydown", (e) => {
+    keys[e.key] = true;
+    
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d"].includes(e.key)) {
+        e.preventDefault();
+    }
+});
+
+window.addEventListener("keyup", (e) => {
+    keys[e.key] = false;
+});
 
 let platforms = [
     { x: 50, y: 180, width: 100, height: 15 },
@@ -76,7 +90,7 @@ function updatePlayer(player, canvas) {
     player.vy += gravity;
     player.y += player.vy;
 
-    let groundLevel = canvas.height - floor - size1;
+    let groundLevel = canvas.height - floor - player.size;
     if (player.y >= groundLevel) {
         player.y = groundLevel;
         player.vy = 0;
@@ -86,70 +100,37 @@ function updatePlayer(player, canvas) {
     }
 }
 
-function move(e){
-    let key = e.key;
-    if(e.defaultPrevented){
-        return;
+function handleInput() {
+    if (keys["a"]) {
+        player1.x -= moveSpeed;
+        if (player1.x < 0) player1.x = 0;
     }
-    switch(key){
-        case "a":
-            player1.x -= size1;
-            if(player1.x <= 0){
-                player1.x = 0;
-            }
-            break;
-        case "d":
-            player1.x += size1;
-            if(player1.x >= canvas1.clientWidth - size1){
-                player1.x = canvas1.clientWidth - size1;
-            }
-            break;
-             
-        case "ArrowLeft":
-            player2.x -= size2;
-            if(player2.x <= 0){
-                player2.x = 0;
-            }
-            break;
-        case "ArrowRight":
-            player2.x += size2;
-            if(player2.x >= canvas2.clientWidth - size2){
-                player2.x = canvas2.clientWidth - size2;
-            }
-            break;
-       
-        default:
-            return;
+    if (keys["d"]) {
+        player1.x += moveSpeed;
+        if (player1.x > canvas1.clientWidth - player1.size) {
+            player1.x = canvas1.clientWidth - player1.size;
+        }
+    }
+    if (keys["w"] && player1.isGrounded) {
+        player1.vy = jumpPower;
+        player1.isGrounded = false;
     }
 
-    
-    e.preventDefault();
-}
 
-function jump(e){
-     let key = e.key;
-    if(e.defaultPrevented){
-        return;
+    if (keys["ArrowLeft"]) {
+        player2.x -= moveSpeed;
+        if (player2.x < 0) player2.x = 0;
     }
-    switch(key){
-        case "w":
-            if (player1.isGrounded) {
-                player1.vy = jumpPower;
-                player1.isGrounded = false;
-            }
-            break;
-     
-         case "ArrowUp": 
-            if (player2.isGrounded) {
-                player2.vy = jumpPower;
-                player2.isGrounded = false;
-            }
-            break;
-        default:
-            return;
+    if (keys["ArrowRight"]) {
+        player2.x += moveSpeed;
+        if (player2.x > canvas2.clientWidth - player2.size) {
+            player2.x = canvas2.clientWidth - player2.size;
+        }
     }
-    e.preventDefault();
-
+    if (keys["ArrowUp"] && player2.isGrounded) {
+        player2.vy = jumpPower;
+        player2.isGrounded = false;
+    }
 }
 
 setup();
@@ -157,5 +138,6 @@ setup();
 intervalID = setInterval(()=>{
     clearBoard();
     setup();
+    handleInput();
 }, 10)
 
