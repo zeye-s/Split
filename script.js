@@ -4,6 +4,7 @@ const ctx1 = canvas1.getContext('2d');
 const ctx2 = canvas2.getContext('2d');
 const floor = 20;
 const gravity = 0.2;
+const stageSelection = document.getElementById("stageSelection");
 
 let intervalID;
 let size1 = 20;
@@ -259,7 +260,14 @@ function handleInput() {
     if(keys["r"]){
         loadStage();
     }
+    if(keys["m"]){
+        stageSelection.classList.add("open");
+    }
+    if(keys["Escape"]){
+        stageSelection.classList.remove("open");
+    }
 }
+
 
 setup();
 
@@ -317,9 +325,19 @@ function loadStage(){
         case 1:
             stage1();
             break;
+        case 2:
+            stage2();
+            break;
+        case 3:
+            stage3();
+            break;
+        case 4:
+            stage4();
+            break;
         default:
             stage = 0;
     }
+    stageSelection.classList.remove("open");
 }
 
 
@@ -407,4 +425,35 @@ next.addEventListener("click", ()=>{
 reset.addEventListener("click", ()=>{
     loadStage();
     completeScreen.classList.remove("finish");
+})
+
+const select0 = document.getElementById("select0");
+const select1 = document.getElementById("select1");
+const select2 = document.getElementById("select2");
+const select3 = document.getElementById("select3");
+const select4 = document.getElementById("select4");
+
+select0.addEventListener("click", ()=>{
+    stage = 0;
+    loadStage();
+})
+
+select1.addEventListener("click", ()=>{
+    stage = 1;
+    loadStage();
+})
+
+select2.addEventListener("click", ()=>{
+    stage = 2;
+    loadStage();
+})
+
+select3.addEventListener("click", ()=>{
+    stage = 3;
+    loadStage();
+})
+
+select4.addEventListener("click", ()=>{
+    stage = 4;
+    loadStage();
 })
