@@ -240,6 +240,9 @@ function handleInput() {
             player2.isGrounded = false;
         }
     }
+    if(keys["r"]){
+        loadStage();
+    }
 }
 
 setup();
@@ -294,10 +297,13 @@ function loadStage(){
     switch(stage){
         case 0:
             stage0();
+            break;
         case 1:
             stage1();
+            break;
         default:
             stage0();
+            break;
     }
 }
 
