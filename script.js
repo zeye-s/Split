@@ -44,34 +44,17 @@ window.addEventListener("keyup", (e) => {
 });
 
 let platforms1 = [
-    { x: 140, y: 70, width: 80, height: 15 },
-    { x: 290, y: 160, width: 90, height: 15 },
     
-    { x: 380, y: 250, width: 100, height: 15 },
-    { x: 480, y: 290, width: 70, height: 15 },
-    { x: 410, y: 390, width: 90, height: 15 },
-    
-    { x: 520, y: 500, width: 110, height: 15 },
-    { x: 670, y: 430, width: 80, height: 15 }
 ];
 
 let platforms2 = [
-    { x: 140, y: 70, width: 80, height: 15 },
-    { x: 290, y: 160, width: 90, height: 15 },
     
-    { x: 380, y: 250, width: 100, height: 15 },
-    { x: 480, y: 290, width: 70, height: 15 },
-    { x: 410, y: 390, width: 90, height: 15 },
-    
-    { x: 520, y: 500, width: 110, height: 15 },
-    { x: 670, y: 430, width: 80, height: 15 }
 ];
 
 let goals1 = [
-    {x: 100, y: 20, width:50, height:15},
+   
 ];
 let goals2 = [
-    {x: 100, y: 20, width:50, height:15},
 ];
 
 let redButtons1 = [{}];
@@ -96,7 +79,7 @@ function drawPlatforms1(ctx) {
     }
 }
 
-function checkButton1(){
+function checkButton(){
     for(let r of redButtons1){
         let hitButtonX = (player1.x + player1.size > r.x) && (player1.x < r.x + r.width);
         let hitButtonY = (player1.y + player1.size >= r.y) && (player1.y <= r.y + r.height);
@@ -110,9 +93,7 @@ function checkButton1(){
             }
         }
     }
-}
 
-function checkButton2(){
     for(let r of redButtons2){
         let hitButtonX = (player2.x + player2.size > r.x) && (player2.x < r.x + r.width);
         let hitButtonY = (player2.y + player2.size >= r.y) && (player2.y <= r.y + r.height);
@@ -149,7 +130,7 @@ function drawPlatforms2(ctx) {
 function setup(){
     updatePlayer(player1, canvas1, platforms1, goals1);
     updatePlayer(player2, canvas2, platforms2, goals2);
-
+       
     ctx1.fillStyle = "red";
     ctx1.fillRect(player1.x, player1.y, size1, size1);
     ctx2.fillStyle = "lightblue";
@@ -166,7 +147,7 @@ function setup(){
     ctx2.fillStyle = "black";
     ctx1.strokeRect(player1.x, player1.y, size1, size1);
     ctx2.strokeRect(player2.x, player2.y, size2, size2);
-    
+    checkButton();
 }
 
 
@@ -210,8 +191,7 @@ function updatePlayer(player, canvas, currentPlatforms, currentGoals) {
         }
     }
 
-    checkButton1();
-    checkButton2();
+
 
     for (let g of currentGoals) {
         let horizontalOverlap = (player.x + player.size > g.x) && (player.x < g.x + g.width);
@@ -269,12 +249,12 @@ intervalID = setInterval(()=>{
     setup();
     handleInput();
     checkFinish();
-    drawBoard1();
 }, 10)
 
 const player1Finish = document.getElementById("player1Finish");
 const player2Finish = document.getElementById("player2Finish");
 const completeScreen = document.getElementById("completeScreen");
+const congrats = document.getElementById("congrats");
 
 function checkFinish(){
     if(player1.finish){
@@ -287,10 +267,41 @@ function checkFinish(){
         player1Finish.classList.remove("finish");
         player2Finish.classList.remove("finish");
         completeScreen.classList.add("finish");
+        congrats.textContent = `Complete Stage ${stage}, Congratulations!`
     }
 }
 
 let stage = 0;
+function loadStage(){
+     player1 = {
+        x: 25,
+        y: canvas1.clientHeight - floor - size1,
+        vy: 0,
+        isGrounded: false,
+        size: size1,
+        finish: false,
+    }
+
+    player2 = {
+        x: 25,
+        y: canvas2.clientHeight - floor - size2,
+        vy: 0,
+        isGrounded: false,
+        size:size2,
+        finish: false,
+    }
+
+    switch(stage){
+        case 0:
+            stage0();
+        case 1:
+            stage1();
+        default:
+            stage0();
+    }
+}
+
+
 
 function stage0(){
     platforms1 = [
@@ -318,11 +329,13 @@ function stage0(){
     ];
 
     goals1 = [
-        {x: 100, y: 20, width:50, height:15},
+         {x: 100, y: 20, width:50, height:15},
     ]
     goals2 = [
         {x: 100, y: 20, width:50, height:15},
     ]
+    redButtons1 = [{}];
+    redButtons2 = [{}];
 }
 
 function stage1(){
@@ -332,13 +345,13 @@ function stage1(){
         { x: 380, y: 250, width: 100, height: 15 },
     ];
 
-     redButton = {
+     redButtons1= [{
         x: 300,
         y: 145, 
         width: 30,
         height: 15,
         pressed: false
-    };
+    }];
 
      goals1 = [
         { x: 100, y: 20, width: 50, height: 15 },
@@ -352,7 +365,25 @@ function stage1(){
         { x: 300, y: 300, width: 90, height: 15, isBridge: true, active: false }
     ];
 
+    redButtons2= [{}];
+
      goals2 = [
         { x: 700, y: 380, width: 50, height: 15 },
     ];
 }
+
+loadStage();
+
+const next= document.getElementById("next");
+const reset = document.getElementById("reset");
+
+next.addEventListener("click", ()=>{
+    stage += 1;
+    loadStage();
+    completeScreen.classList.remove("finish");
+})
+
+reset.addEventListener("click", ()=>{
+    loadStage();
+    completeScreen.classList.remove("finish");
+})

@@ -90,3 +90,11 @@ body{
     z-index:999;
     opacity:1;
 }
+
+#completeScreen button{
+    background:black;
+    color:white;
+    width:49%;
+    height:30px;
+    cursor:pointer;    
+}
