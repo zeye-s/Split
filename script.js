@@ -21,6 +21,7 @@ let player1 = {
     isGrounded: false,
     size: size1,
     finish: false,
+    teleportCooldown:0,
 }
 
 let player2 = {
@@ -30,6 +31,7 @@ let player2 = {
     isGrounded: false,
     size:size2,
     finish: false,
+    teleportCooldown:0,
 }
 
 window.addEventListener("keydown", (e) => {
@@ -61,10 +63,17 @@ let goals2 = [
 let redButtons1 = [{}];
 let redButtons2 = [{}];
 
+let portals1 = [];
+let portals2 = [];
+
 function drawPlatforms1(ctx) {
     ctx.fillStyle = "red";
     for(let r of redButtons1){
         ctx.fillRect(r.x, r.y, r.width, r.height);
+    }
+    for(let portal of portals1){
+        ctx.fillStyle = "yellow";
+        ctx.fillRect(portal.x, portal.y, portal.width, portal.height);
     }
 
     for (let p of platforms1) {
@@ -125,10 +134,67 @@ function checkButton(){
     }
 }
 
+function checkPortals1(){
+    if (player1.teleportCooldown > 0) {
+        player1.teleportCooldown--;
+        return;
+    }
+
+    for (let portal of portals1) {
+        let hit = (player1.x + player1.size > portal.x) && 
+                  (player1.x < portal.x + portal.width) && 
+                  (player1.y + player1.size > portal.y) && 
+                  (player1.y < portal.y + portal.height);
+
+        if (hit) {
+            let target = portals1.find(p => p !== portal && p.targetID === portal.targetID);
+            if (target) {
+                player1.x = target.x + (target.width / 2) - (player1.size / 2);
+                player1.y = target.y - player1.size - 5; 
+                player1.vy = 0;
+                player1.teleportCooldown = 30; 
+                break;
+            }
+        }
+    }
+
+   
+}
+
+function checkPortals2(){
+     if (player2.teleportCooldown > 0) {
+        player2.teleportCooldown--;
+        return;
+    }
+
+    for (let portal of portals2) {
+        let hit = (player2.x + player2.size > portal.x) && 
+                  (player2.x < portal.x + portal.width) && 
+                  (player2.y + player2.size > portal.y) && 
+                  (player2.y < portal.y + portal.height);
+
+        if (hit) {
+            let target = portals2.find(p => p !== portal && p.targetID === portal.targetID);
+            if (target) {
+                player2.x = target.x + (target.width / 2) - (player2.size / 2);
+                player2.y = target.y - player2.size - 5; 
+                player2.vy = 0;
+                player2.teleportCooldown = 30; 
+                break;
+            }
+        }
+    }
+}
+
 function drawPlatforms2(ctx) {
     ctx.fillStyle = "red";
     for(let r of redButtons2){
         ctx.fillRect(r.x, r.y, r.width, r.height);
+    }
+
+    for(let portal of portals2){
+        ctx.fillStyle = "yellow";
+        ctx.fillRect(portal.x, portal.y, portal.width, portal.height);
     }
 
     for (let p of platforms2) {
@@ -174,6 +240,8 @@ function setup(){
     ctx1.strokeRect(player1.x, player1.y, size1, size1);
     ctx2.strokeRect(player2.x, player2.y, size2, size2);
     checkButton();
+    checkPortals1();
+    checkPortals2();
 }
 
 
@@ -473,6 +541,100 @@ function stage2(){
         { x: 100, y: 20, width: 50, height: 15 },
     ];
 }
+
+function stage3(){
+    platforms1 = [
+        {x:330, y:90, width:100, height:15},
+        {x:460, y:140, width:100, height:15},
+        {x:190, y:100, width:90, height:15},
+    ];
+
+    redButtons1= [
+        
+    ];
+
+     goals1 = [
+        { x: 100, y: 20, width: 50, height: 15 },
+    ];
+
+
+     platforms2 = [
+        {x:330, y:90, width:100, height:15},
+        {x:460, y:140, width:100, height:15},
+        {x:190, y:100, width:90, height:15},
+    ];
+
+    redButtons2= [
+
+    ];
+
+     goals2 = [
+        { x: 100, y: 20, width: 50, height: 15 },
+    ];
+
+    portals1 = [
+        {x:100, y:490, width:100, height:20, targetID: "portalA"},
+        {x:500, y:90, width:100, height:20, targetID: "portalA"},
+    ];
+
+    portals2 = [
+        {x:100, y:490, width:100, height:20, targetID: "portalB"},
+        {x:500, y:90, width:100, height:20, targetID: "portalB"},
+    ];
+}
+
+function stage4(){
+     platforms1 = [
+        {x:50, y:470, width: 70, height:15},
+        {x:90, y:410, width:80, height:15},
+        {x:270, y: 380, width:70, height:15, targetID: "bridgeB", isBridge:true, active:false},
+        {x:670, y: 150, width:190, height: 15},
+        {x:340, y: 280, width: 60, height: 15, targetID: "bridgeC", isBridge:true, active:false},
+        {x: 180, y : 190, width: 70, height: 15, targetID: "bridgeC", isBridge:true, active: false},
+        {x: 270, y : 100, width: 40, height: 15},
+    ];
+
+    redButtons1= [
+        {x:90, y:400, width:30, height:10, targetID: "bridgeA"},
+        {x: 700, y: 140, width:30, height:10, targetID: "bridgeB"},
+        {x:180, y: 180, width:30, height:10, targetID: "bridgeD"},
+    ];
+
+     goals1 = [
+        { x: 100, y: 20, width: 50, height: 15 },
+    ];
+
+
+    platforms2 = [
+        {x:70, y:460, width:70, height:15, targetID: "bridgeA", isBridge:true, active:false},
+        {x:190, y: 400, width:150, height: 15},
+        {x:420, y: 380, width: 50, height: 15, targetID: "bridgeB", isBridge:true, active:false},
+        {x:660, y: 120, width: 60, height:15},
+        {x:480, y: 200, width: 80, height:15},
+        {x: 330, y: 170, width:90, height: 15, targetID: "bridgeD", isBridge:true, active:false},
+        {x: 220, y: 100, width: 40, height: 15},
+    ];
+
+    redButtons2= [
+        {x:290, y: 390, width:30, height:10, targetID: "bridgeB"},
+        {x:480, y: 190, width: 30, height:10, targetID: "bridgeC"},
+    ];
+
+     goals2 = [
+        { x: 100, y: 20, width: 50, height: 15 },
+    ];
+
+    portals1 = [
+        {x:420, y:370, width:70, height:20, targetID: "portalA"},
+        {x: 650, y: 90, width: 80, height: 20, targetID :"portalA"}
+    ];
+
+    portals2 = [
+        {x:560, y: 380, width:50, height: 15, targetID: "portalB"},
+        {x: 660, y: 30, width: 50, height: 15, targetID: "portalB"},
+    ];
+}
+
 
 loadStage();
 

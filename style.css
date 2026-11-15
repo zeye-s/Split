@@ -16,6 +16,7 @@ body{
     flex-direction: row;
     justify-content: space-evenly;
     overflow:hidden;
+    background-color: gray;
 }
 
 .down, .up{
