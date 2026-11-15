@@ -63,7 +63,6 @@ let redButtons2 = [{}];
 function drawPlatforms1(ctx) {
     ctx.fillStyle = "white"; 
     for (let p of platforms1) {
-        ctx.fillRect(p.x, p.y, p.width, p.height);
         if (p.isBridge && !p.active) {
             continue;
         }
@@ -71,11 +70,17 @@ function drawPlatforms1(ctx) {
             ctx2.fillStyle = p.isBridge ? "orange" : "black"; 
             ctx2.fillRect(p.x, p.y, p.width, p.height);
         }
+        ctx.fillRect(p.x, p.y, p.width, p.height);
         
     }
     ctx.fillStyle = "lightgreen";
     for (let g of goals1) {
         ctx.fillRect(g.x, g.y, g.width, g.height);
+    }
+
+    ctx.fillStyle = "red";
+    for(let r of redButtons1){
+        ctx.fillRect(r.x, r.y, r.width, r.height);
     }
 }
 
@@ -87,10 +92,13 @@ function checkButton(){
         if (hitButtonX && hitButtonY) {
             r.pressed = true;
             for (let p of platforms2) {
-                if (p.isBridge) {
+                if (p.isBridge && r.pressed) {
                     p.active = true;
                 }
             }
+        }
+        else{
+            r.pressed = false;
         }
     }
 
@@ -100,11 +108,14 @@ function checkButton(){
 
         if (hitButtonX && hitButtonY) {
             r.pressed = true;
-            for (let p of platforms2) {
-                if (p.isBridge) {
+            for (let p of platforms1) {
+                if (p.isBridge && r.pressed) {
                     p.active = true;
                 }
             }
+        }
+        else{
+            r.pressed = false;
         }
     }
 }
@@ -112,7 +123,6 @@ function checkButton(){
 function drawPlatforms2(ctx) {
     ctx.fillStyle = "white"; 
     for (let p of platforms2) {
-        ctx.fillRect(p.x, p.y, p.width, p.height);
         if (p.isBridge && !p.active) {
             continue;
         }
@@ -120,10 +130,16 @@ function drawPlatforms2(ctx) {
             ctx2.fillStyle = p.isBridge ? "orange" : "black"; 
             ctx2.fillRect(p.x, p.y, p.width, p.height);
         }
+        ctx.fillRect(p.x, p.y, p.width, p.height);
     }
     ctx.fillStyle = "lightgreen";
     for (let g of goals2) {
         ctx.fillRect(g.x, g.y, g.width, g.height);
+    }
+
+    ctx.fillStyle = "red";
+    for(let r of redButtons2){
+        ctx.fillRect(r.x, r.y, r.width, r.height);
     }
 }
 
@@ -302,8 +318,7 @@ function loadStage(){
             stage1();
             break;
         default:
-            stage0();
-            break;
+            stage = 0;
     }
 }
 
@@ -353,7 +368,7 @@ function stage1(){
 
      redButtons1= [{
         x: 300,
-        y: 145, 
+        y: 525, 
         width: 30,
         height: 15,
         pressed: false
@@ -374,7 +389,7 @@ function stage1(){
     redButtons2= [{}];
 
      goals2 = [
-        { x: 700, y: 380, width: 50, height: 15 },
+        { x: 100, y: 20, width: 50, height: 15 },
     ];
 }
 
