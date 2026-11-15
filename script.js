@@ -62,16 +62,23 @@ let redButtons1 = [{}];
 let redButtons2 = [{}];
 
 function drawPlatforms1(ctx) {
-    ctx.fillStyle = "white"; 
+    ctx.fillStyle = "red";
+    for(let r of redButtons1){
+        ctx.fillRect(r.x, r.y, r.width, r.height);
+    }
+
     for (let p of platforms1) {
         if (p.isBridge && !p.active) {
             continue;
         }
         else if (p.isBridge && p.active){
-            ctx2.fillStyle = p.isBridge ? "orange" : "black"; 
-            ctx2.fillRect(p.x, p.y, p.width, p.height);
+            ctx.fillStyle = p.isBridge ? "orange" : "black"; 
+            ctx.fillRect(p.x, p.y, p.width, p.height);
         }
-        ctx.fillRect(p.x, p.y, p.width, p.height);
+         else{
+            ctx.fillStyle = "white"; 
+            ctx.fillRect(p.x, p.y, p.width, p.height);
+        }
         
     }
     ctx.fillStyle = "lightgreen";
@@ -79,10 +86,7 @@ function drawPlatforms1(ctx) {
         ctx.fillRect(g.x, g.y, g.width, g.height);
     }
 
-    ctx.fillStyle = "red";
-    for(let r of redButtons1){
-        ctx.fillRect(r.x, r.y, r.width, r.height);
-    }
+    
 }
 
 function checkButton(){
@@ -93,7 +97,7 @@ function checkButton(){
         if (hitButtonX && hitButtonY) {
             r.pressed = true;
             for (let p of platforms2) {
-                if (p.isBridge && r.pressed) {
+                if (p.isBridge && r.pressed && r.targetID === p.targetID) {
                     p.active = true;
                 }
             }
@@ -110,7 +114,7 @@ function checkButton(){
         if (hitButtonX && hitButtonY) {
             r.pressed = true;
             for (let p of platforms1) {
-                if (p.isBridge && r.pressed) {
+                if (p.isBridge && r.pressed && r.targetID === p.targetID) {
                     p.active = true;
                 }
             }
@@ -122,26 +126,31 @@ function checkButton(){
 }
 
 function drawPlatforms2(ctx) {
-    ctx.fillStyle = "white"; 
+    ctx.fillStyle = "red";
+    for(let r of redButtons2){
+        ctx.fillRect(r.x, r.y, r.width, r.height);
+    }
+
     for (let p of platforms2) {
         if (p.isBridge && !p.active) {
             continue;
         }
         else if (p.isBridge && p.active){
-            ctx2.fillStyle = p.isBridge ? "orange" : "black"; 
-            ctx2.fillRect(p.x, p.y, p.width, p.height);
+            ctx.fillStyle = p.isBridge ? "orange" : "black"; 
+            ctx.fillRect(p.x, p.y, p.width, p.height);
         }
-        ctx.fillRect(p.x, p.y, p.width, p.height);
+        else{
+            ctx.fillStyle = "white"; 
+            ctx.fillRect(p.x, p.y, p.width, p.height);
+        }
+        
     }
     ctx.fillStyle = "lightgreen";
     for (let g of goals2) {
         ctx.fillRect(g.x, g.y, g.width, g.height);
     }
 
-    ctx.fillStyle = "red";
-    for(let r of redButtons2){
-        ctx.fillRect(r.x, r.y, r.width, r.height);
-    }
+   
 }
 
 function setup(){
@@ -340,8 +349,6 @@ function loadStage(){
     stageSelection.classList.remove("open");
 }
 
-
-
 function stage0(){
     platforms1 = [
         { x: 140, y: 70, width: 80, height: 15 },
@@ -382,6 +389,10 @@ function stage1(){
         { x: 140, y: 70, width: 80, height: 15 },
         { x: 290, y: 160, width: 90, height: 15 },
         { x: 380, y: 250, width: 100, height: 15 },
+        {x:280, y: 330, width:80, height:15},
+        { x: 410, y: 390, width: 90, height: 15, isBridge: true, active: false  },
+        { x: 520, y: 500, width: 110, height: 15 , isBridge: true, active: false },
+        { x: 670, y: 430, width: 80, height: 15, isBridge: true, active: false  },
     ];
 
      redButtons1= [{
@@ -398,13 +409,65 @@ function stage1(){
 
 
      platforms2 = [
+        { x: 140, y: 70, width: 80, height: 15 },
+        { x: 290, y: 160, width: 90, height: 15 },
         { x: 410, y: 390, width: 90, height: 15 },
         { x: 520, y: 500, width: 110, height: 15 },
         { x: 670, y: 430, width: 80, height: 15 },
-        { x: 300, y: 300, width: 90, height: 15, isBridge: true, active: false }
+        { x: 300, y: 300, width: 90, height: 15, isBridge: true, active: false },
+        {x:250, y: 240, width:100, height:15},
     ];
 
-    redButtons2= [{}];
+    redButtons2= [
+        {x:250, y:235, width:30, height:10},
+    ];
+
+     goals2 = [
+        { x: 100, y: 20, width: 50, height: 15 },
+    ];
+}
+
+function stage2(){
+     platforms1 = [
+        {x:50, y:480, width:100, height:15},
+        {x:220, y:390, width:80, height:15},
+        {x:350, y:390, width:80, height:15, targetID: "bridgeB", isBridge:true, active:false},
+        {x:490, y: 330, width:20, height:15, targetID: "bridgeB", isBridge:true, active:false},
+        {x:550, y: 330, width:20, height:15, targetID: "bridgeB", isBridge:true, active:false},
+        {x:390, y:250, width:80, height:15},
+        {x:220, y:180, width:70, height: 15},
+        {x:220, y:80, width:70, height:15, targetID: "bridgeD", isBridge:true, active:false},
+    ];
+
+     redButtons1= [
+        {x:250, y:380, width:30, height:10, targetID: "bridgeA"},
+        {x:canvas2.width - 10, y: 280, width:10, height:30, targetID: "bridgeC"},
+        {x:220, y:70, width:30, height:15, targetID: "bridgeE"},
+    ];
+
+     goals1 = [
+        { x: 100, y: 20, width: 50, height: 15 },
+    ];
+
+
+     platforms2 = [
+       {x:70, y: 470, width:70, height:15, targetID: "bridgeA", isBridge:true, active:false},
+       {x:220, y:420, width:30, height:15},
+       {x:390, y:420, width:30, height:15},
+       {x:540, y:420, width:30, height:15},
+       {x:700, y:390, width:100, height:15},
+       {x:700, y:290, width:70, height:15, targetID: "bridgeC", isBridge:true, active:false},
+       {x:700, y:190, width:70, height:15},
+       {x:590, y:100, width:70, height:15},
+       {x:350, y:280, width:20, height:15},
+       {x:170, y:210, width:60, height:15},
+       {x:170, y:110, width:60, height:15, targetID: "bridgeE", isBridge:true, active:false},
+    ];
+
+    redButtons2= [
+        {x:720, y:380, width:30, height:10, targetID: "bridgeB"},
+        {x:170, y:200, width:30, height:15, targetID:"bridgeD"},
+    ];
 
      goals2 = [
         { x: 100, y: 20, width: 50, height: 15 },
@@ -457,3 +520,4 @@ select4.addEventListener("click", ()=>{
     stage = 4;
     loadStage();
 })
+  
