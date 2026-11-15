@@ -43,7 +43,7 @@ window.addEventListener("keyup", (e) => {
     keys[e.key] = false;
 });
 
-let platforms = [
+let platforms1 = [
     { x: 140, y: 70, width: 80, height: 15 },
     { x: 290, y: 160, width: 90, height: 15 },
     
@@ -55,32 +55,108 @@ let platforms = [
     { x: 670, y: 430, width: 80, height: 15 }
 ];
 
-let goals = [
-    {x: 100, y: 20, width:50, height:15},
-]
+let platforms2 = [
+    { x: 140, y: 70, width: 80, height: 15 },
+    { x: 290, y: 160, width: 90, height: 15 },
+    
+    { x: 380, y: 250, width: 100, height: 15 },
+    { x: 480, y: 290, width: 70, height: 15 },
+    { x: 410, y: 390, width: 90, height: 15 },
+    
+    { x: 520, y: 500, width: 110, height: 15 },
+    { x: 670, y: 430, width: 80, height: 15 }
+];
 
-function drawPlatforms(ctx) {
+let goals1 = [
+    {x: 100, y: 20, width:50, height:15},
+];
+let goals2 = [
+    {x: 100, y: 20, width:50, height:15},
+];
+
+let redButtons1 = [{}];
+let redButtons2 = [{}];
+
+function drawPlatforms1(ctx) {
     ctx.fillStyle = "white"; 
-    for (let p of platforms) {
+    for (let p of platforms1) {
         ctx.fillRect(p.x, p.y, p.width, p.height);
+        if (p.isBridge && !p.active) {
+            continue;
+        }
+        else if (p.isBridge && p.active){
+            ctx2.fillStyle = p.isBridge ? "orange" : "black"; 
+            ctx2.fillRect(p.x, p.y, p.width, p.height);
+        }
+        
     }
     ctx.fillStyle = "lightgreen";
-    for (let g of goals) {
+    for (let g of goals1) {
+        ctx.fillRect(g.x, g.y, g.width, g.height);
+    }
+}
+
+function checkButton1(){
+    for(let r of redButtons1){
+        let hitButtonX = (player1.x + player1.size > r.x) && (player1.x < r.x + r.width);
+        let hitButtonY = (player1.y + player1.size >= r.y) && (player1.y <= r.y + r.height);
+
+        if (hitButtonX && hitButtonY) {
+            r.pressed = true;
+            for (let p of platforms2) {
+                if (p.isBridge) {
+                    p.active = true;
+                }
+            }
+        }
+    }
+}
+
+function checkButton2(){
+    for(let r of redButtons2){
+        let hitButtonX = (player2.x + player2.size > r.x) && (player2.x < r.x + r.width);
+        let hitButtonY = (player2.y + player2.size >= r.y) && (player2.y <= r.y + r.height);
+
+        if (hitButtonX && hitButtonY) {
+            r.pressed = true;
+            for (let p of platforms2) {
+                if (p.isBridge) {
+                    p.active = true;
+                }
+            }
+        }
+    }
+}
+
+function drawPlatforms2(ctx) {
+    ctx.fillStyle = "white"; 
+    for (let p of platforms2) {
+        ctx.fillRect(p.x, p.y, p.width, p.height);
+        if (p.isBridge && !p.active) {
+            continue;
+        }
+        else if (p.isBridge && p.active){
+            ctx2.fillStyle = p.isBridge ? "orange" : "black"; 
+            ctx2.fillRect(p.x, p.y, p.width, p.height);
+        }
+    }
+    ctx.fillStyle = "lightgreen";
+    for (let g of goals2) {
         ctx.fillRect(g.x, g.y, g.width, g.height);
     }
 }
 
 function setup(){
-    updatePlayer(player1, canvas1);
-    updatePlayer(player2, canvas2);
+    updatePlayer(player1, canvas1, platforms1, goals1);
+    updatePlayer(player2, canvas2, platforms2, goals2);
 
     ctx1.fillStyle = "red";
     ctx1.fillRect(player1.x, player1.y, size1, size1);
     ctx2.fillStyle = "lightblue";
     ctx2.fillRect(player2.x, player2.y, size1, size1);
 
-    drawPlatforms(ctx1);
-    drawPlatforms(ctx2);
+    drawPlatforms1(ctx1);
+    drawPlatforms2(ctx2);
     ctx1.fillStyle = "white";
     ctx2.fillStyle = "white";
     ctx1.fillRect(0, canvas1.clientHeight - floor, canvas1.clientWidth, floor);
@@ -93,6 +169,7 @@ function setup(){
     
 }
 
+
 function clearBoard(){
     ctx1.fillStyle = "black";
     ctx2.fillStyle = "black";
@@ -101,7 +178,7 @@ function clearBoard(){
     ctx2.fillRect(0,0,canvas2.clientWidth, canvas2.clientHeight);
 }
 
-function updatePlayer(player, canvas) {
+function updatePlayer(player, canvas, currentPlatforms, currentGoals) {
     player.vy += gravity;
     player.y += player.vy;
     player.isGrounded = false;
@@ -118,7 +195,11 @@ function updatePlayer(player, canvas) {
     let playerBottomPrev = (player.y - player.vy) + player.size;
     let playerBottomCurr = player.y + player.size;
 
-    for (let p of platforms) {
+    for (let p of currentPlatforms) {
+        if (p.isBridge && !p.active){ 
+            continue;
+        };
+
         let horizontalOverlap = (player.x + player.size > p.x) && (player.x < p.x + p.width);
 
         if (horizontalOverlap && player.vy >= 0 && playerBottomPrev <= p.y && playerBottomCurr >= p.y) {
@@ -128,7 +209,11 @@ function updatePlayer(player, canvas) {
             break;
         }
     }
-    for (let g of goals) {
+
+    checkButton1();
+    checkButton2();
+
+    for (let g of currentGoals) {
         let horizontalOverlap = (player.x + player.size > g.x) && (player.x < g.x + g.width);
 
         if (horizontalOverlap && player.vy >= 0 && playerBottomPrev <= g.y && playerBottomCurr >= g.y) {
@@ -184,6 +269,7 @@ intervalID = setInterval(()=>{
     setup();
     handleInput();
     checkFinish();
+    drawBoard1();
 }, 10)
 
 const player1Finish = document.getElementById("player1Finish");
@@ -202,4 +288,71 @@ function checkFinish(){
         player2Finish.classList.remove("finish");
         completeScreen.classList.add("finish");
     }
+}
+
+let stage = 0;
+
+function stage0(){
+    platforms1 = [
+        { x: 140, y: 70, width: 80, height: 15 },
+        { x: 290, y: 160, width: 90, height: 15 },
+        
+        { x: 380, y: 250, width: 100, height: 15 },
+        { x: 480, y: 290, width: 70, height: 15 },
+        { x: 410, y: 390, width: 90, height: 15 },
+        
+        { x: 520, y: 500, width: 110, height: 15 },
+        { x: 670, y: 430, width: 80, height: 15 }
+    ];
+
+    platforms2 = [
+        { x: 140, y: 70, width: 80, height: 15 },
+        { x: 290, y: 160, width: 90, height: 15 },
+        
+        { x: 380, y: 250, width: 100, height: 15 },
+        { x: 480, y: 290, width: 70, height: 15 },
+        { x: 410, y: 390, width: 90, height: 15 },
+        
+        { x: 520, y: 500, width: 110, height: 15 },
+        { x: 670, y: 430, width: 80, height: 15 }
+    ];
+
+    goals1 = [
+        {x: 100, y: 20, width:50, height:15},
+    ]
+    goals2 = [
+        {x: 100, y: 20, width:50, height:15},
+    ]
+}
+
+function stage1(){
+    platforms1 = [
+        { x: 140, y: 70, width: 80, height: 15 },
+        { x: 290, y: 160, width: 90, height: 15 },
+        { x: 380, y: 250, width: 100, height: 15 },
+    ];
+
+     redButton = {
+        x: 300,
+        y: 145, 
+        width: 30,
+        height: 15,
+        pressed: false
+    };
+
+     goals1 = [
+        { x: 100, y: 20, width: 50, height: 15 },
+    ];
+
+
+     platforms2 = [
+        { x: 410, y: 390, width: 90, height: 15 },
+        { x: 520, y: 500, width: 110, height: 15 },
+        { x: 670, y: 430, width: 80, height: 15 },
+        { x: 300, y: 300, width: 90, height: 15, isBridge: true, active: false }
+    ];
+
+     goals2 = [
+        { x: 700, y: 380, width: 50, height: 15 },
+    ];
 }
